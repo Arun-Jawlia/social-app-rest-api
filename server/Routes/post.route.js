@@ -74,7 +74,6 @@ PostRouter.get("/:id", async (req, res) => {
 
 // getTimeLine Posts
 PostRouter.get("/timeline/:userId", async (req, res) => {
-  let postArray = [];
   try {
 
     const currentUser = await UserModel.findById(req.params.userId)
