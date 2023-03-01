@@ -73,11 +73,11 @@ PostRouter.get("/:id", async (req, res) => {
 });
 
 // getTimeLine Posts
-PostRouter.get("/timeline/all", async (req, res) => {
+PostRouter.get("/timeline/:userId", async (req, res) => {
   let postArray = [];
   try {
 
-    const currentUser = await UserModel.findById(req.body.userId)
+    const currentUser = await UserModel.findById(req.params.userId)
     const userPost = await PostModel.find({userId: currentUser._id})
     const friendPost = await Promise.all(
         currentUser.followings.map(friendId=>
@@ -85,13 +85,26 @@ PostRouter.get("/timeline/all", async (req, res) => {
                return PostModel.find({userId: friendId})
             })
     )
-    res.json(userPost.concat(...friendPost))
+    res.status(200).json(userPost.concat(...friendPost))
 
   } catch (error) {
     res.status(500).json(error);
   }
 });
 
-// get all posts
+// get user's all post
+
+PostRouter.get("/profile/:username", async (req, res) => {
+  try {
+    const user = await UserModel.findOne({ username: req.params.username });
+    const posts = await PostModel.find({ userId: user._id });
+    res.status(200).json(posts);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
+
+
+
 
 module.exports = { PostRouter };
